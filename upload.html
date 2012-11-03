@@ -1,0 +1,59 @@
+<h1>Add a new Wallpaper </h1>
+      <form method="post" action="addWallpaper.php" enctype="multipart/form-data">
+
+            <p>
+              Photo Name:
+            </p>
+            <input type="text" name="name"/>
+            <p>
+              Dominant Color:
+            </p>
+            <select name="color1">
+				<option value="Black">Black</option>
+				<option value="Blue">Blue</option>
+				<option value="Blue">Brown</option>
+				<option value="Green">Green</option>				
+				<option value="Grey">Grey</option>
+				<option value="Orange">Orange</option>
+				<option value="Pink">Pink</option>
+				<option value="Purple">Purple</option>
+				<option value="Red">Red</option>
+				<option value="White">White</option>
+				<option value="Yellow">Yellow</option>
+			</select>
+            <p>
+              Other Color:
+            </p>
+            <select name="color2">
+				<option value="-None-">-None-</option>
+				<option value="Black">Black</option>
+				<option value="Blue">Blue</option>
+				<option value="Blue">Brown</option>
+				<option value="Green">Green</option>				
+				<option value="Grey">Grey</option>
+				<option value="Orange">Orange</option>
+				<option value="Pink">Pink</option>
+				<option value="Purple">Purple</option>
+				<option value="Red">Red</option>
+				<option value="White">White</option>
+				<option value="Yellow">Yellow</option>
+			</select>           
+			<p>
+              Tags:
+            </p>
+            <input type="text" name="tags"/>
+            <p>
+              File:
+            </p>
+            <input type="hidden" name="size" value="350000">
+            <input type="file" name="file" id="file">            
+            <p>
+              Comments:
+            </p>
+<textarea rows="10" cols="35" name="comments">
+</textarea>
+
+            <br/>
+            <br/>
+            <input TYPE="submit" title="Upload" value="Upload"/>
+          </form>
