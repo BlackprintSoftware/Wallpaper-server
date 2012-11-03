@@ -6,9 +6,15 @@ $size = $_FILES["file"]["size"];
 $comments = $_POST['comments'];
 $filename = $_FILES['file']['name'];
 $name = $_POST['name'];
-$url = 'http://blackprint.ca/upload/Wallpaper/' . $filename;
+$url = 'http://blackprint.ca/Wallpaper/upload/' . $filename;
 $color = $_POST['color1'];
 $color2 = $_POST['color2'];
+$tag1 = $_POST['tag1'];
+$tag2 = $_POST['tag2'];
+$tag3 = $_POST['tag3'];
+$tag4 = $_POST['tag4'];
+$tag5 = $_POST['tag5'];
+
 
 //CHECK FOR VALID FILE TYPES AND FILE SIZE
 
@@ -44,12 +50,18 @@ if ((($_FILES["file"]["type"] == "image/gif")
 	      
 	      	//OUTPUT FILE DETAILS
 	      
-	      	echo "<br />" . "name:".$name . "<br />";
-			echo "size:".$size . "<br />";
-			echo "url:". $url . "<br />";
-			echo "comments:".$comments . "<br />";
-			echo "color primary:".$color . "<br />";
-			echo "color other:".$color2 . "<br />";
+	      	echo "<br />" . "<h1>Name: ".$name . "</h1>";
+			echo "<h2>Size: ".$size . " bytes</h2>";
+			echo "<h2>url: ". $url . "</h2>";
+			echo "<h2>color primary: ".$color . "</h2>";
+			echo "<h2>color other: ".$color2 . "</h2>";
+			echo "<h2>tag1: ". $tag1 . "</h2>";
+			echo "<h2>tag2: ". $tag2 . "</h2>";
+			echo "<h2>tag3: ". $tag3 . "</h2>";
+			echo "<h2>tag4: ". $tag4 . "</h2>";
+			echo "<h2>tag5: ". $tag5 . "</h2>";
+			echo "<h3>comments: ".$comments . "</h3><br />";
+
 			  
 			//CONNECT TO THE DATABASE
 			$connection = mysql_connect("localhost", "blackpri_david", "sw0rdfi5h");
@@ -71,7 +83,7 @@ if ((($_FILES["file"]["type"] == "image/gif")
 				die('Error: ' . mysql_error());
 			}
 			
-			echo "1 record added to wallpapers <BR />";  
+			echo "1 record added to wallpapers";  
 			
 			//DETERMINE LATEST WALLPAPER ID
 			
@@ -83,7 +95,7 @@ if ((($_FILES["file"]["type"] == "image/gif")
 			
 			$id = $row[0];
 			
-			echo "most recent ID is ".$id."  <BR />";
+			echo " with ID of ".$id."  <BR />";
 			
 			//INSERT PRIMARY COLOR
 			
@@ -110,8 +122,55 @@ if ((($_FILES["file"]["type"] == "image/gif")
 			else
 				echo "1 record added to colors <BR />";
 			
-			  
-			
+			//INSERT TAGS INTO DATABSE
+			$numtags = 0;
+			if ($tag1 != "")
+			{
+				$sql = "INSERT INTO tags (id,tag) VALUES ('$id','$tag1')";
+				if (!mysql_query($sql,$connection))
+				{
+					die('Error: ' . mysql_error());
+				}
+				$numtags++;
+			}
+			if ($tag2 != "")
+			{
+				$sql = "INSERT INTO tags (id,tag) VALUES ('$id','$tag2')";
+				if (!mysql_query($sql,$connection))
+				{
+					die('Error: ' . mysql_error());
+				}
+				$numtags++;
+			}
+			if ($tag3 != "")
+			{
+				$sql = "INSERT INTO tags (id,tag) VALUES ('$id','$tag3')";
+				if (!mysql_query($sql,$connection))
+				{
+					die('Error: ' . mysql_error());
+				}
+				$numtags++;
+			}
+			if ($tag4 != "")
+			{
+				$sql = "INSERT INTO tags (id,tag) VALUES ('$id','$tag4')";
+				if (!mysql_query($sql,$connection))
+				{
+					die('Error: ' . mysql_error());
+				}
+				$numtags++;
+			}
+			if ($tag5 != "")
+			{
+				$sql = "INSERT INTO tags (id,tag) VALUES ('$id','$tag5')";
+				if (!mysql_query($sql,$connection))
+				{
+					die('Error: ' . mysql_error());
+				}
+				$numtags++;
+			}
+			echo $numtags . " records added to tags <BR />";
+
 			//CLOSE CONNECTION
 			
 			mysql_close($connection);
