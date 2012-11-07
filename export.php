@@ -58,23 +58,32 @@ if ($isExportingXML)
 //SHOW NO FILTERS
 else if ( ($color == "") && ($tag == "") )
 {
-	echo "blah";
+	echo "<li>blah</li>";
 }
 
-//FILTERED ON TAG, BUT NOT ON COLOR: DISPLAY COLORS
+//FILTERED ON TAG, BUT NOT ON COLOR. DISPLAY ALL TAGS IF TAG=ALL, OTHERWISE DISPLAY COLORS FILTERED BY THE TAG
 else if ( ($tag != "") && ($color == "") )
 {
 
-	$sql = "SELECT count(*) AS quantity,tag,color FROM tags,wallpapers,colors WHERE tags.id=wallpapers.id AND colors.id=wallpapers.id AND tag='".$tag."' GROUP BY color ORDER BY color ASC";
+	$sql = "";
 
-	//EXECUTE SQL QUERY
-
-	$dbresult = mysql_query($sql,$connection);
-	
-	while($row = mysql_fetch_assoc($dbresult)) {
-	
-		echo "<li>".$row['color']."<span class=\"ui-li-count\">".$row['quantity']."</span></li>";
-
+	if ($tag == "all")
+	{
+		$sql = "SELECT count(*) AS quantity,tag FROM tags,wallpapers WHERE tags.id=wallpapers.id GROUP BY tag ORDER BY tag ASC";
+		//EXECUTE SQL QUERY
+		$dbresult = mysql_query($sql,$connection);
+		while($row = mysql_fetch_assoc($dbresult)) {
+			echo '<li><a href="#homelist" onclick="nextPage(\''.$row['color'].'\',\''.$row['tag'].'\')">'.$row['tag'].'</a></li>';
+		}
+	}
+	else
+	{
+		$sql = "SELECT count(*) AS quantity,tag,color FROM tags,wallpapers,colors WHERE tags.id=wallpapers.id AND colors.id=wallpapers.id AND tag='".$tag."' GROUP BY color ORDER BY color ASC";
+		
+		$dbresult = mysql_query($sql,$connection);
+		while($row = mysql_fetch_assoc($dbresult)) {
+			echo '<li><a href="#homelist" onclick="nextPage(\''.$row['color'].'\',\''.$row['tag'].'\')">'.$row['color'].'</a></li>';
+		}
 	}
 
 }
@@ -83,18 +92,26 @@ else if ( ($tag != "") && ($color == "") )
 else if ( ($color != "") && ($tag == "") )
 {
 
-	$sql = "SELECT count(*) AS quantity,tag,color FROM tags,wallpapers,colors WHERE tags.id=wallpapers.id AND colors.id=wallpapers.id AND color='".$color."' GROUP BY tag ORDER BY tag ASC";
+	$sql = "";
 
-	//EXECUTE SQL QUERY
-
-	$dbresult = mysql_query($sql,$connection);
-	
-	while($row = mysql_fetch_assoc($dbresult)) {
-	
-		echo "<li>".$row['tag']."<span class=\"ui-li-count\">".$row['quantity']."</span></li>";
-
+	if ($color == "all")
+	{
+		$sql = "SELECT count(*) AS quantity,color FROM colors,wallpapers WHERE colors.id=wallpapers.id GROUP BY color ORDER BY color ASC";
+		//EXECUTE SQL QUERY
+		$dbresult = mysql_query($sql,$connection);
+		while($row = mysql_fetch_assoc($dbresult)) {
+			echo '<li><a href="#homelist" onclick="nextPage(\''.$row['color'].'\',\''.$row['tag'].'\')">'.$row['color'].'</a></li>';
+		}
 	}
-
+	else
+	{
+		$sql = "SELECT count(*) AS quantity,tag,color FROM tags,wallpapers,colors WHERE tags.id=wallpapers.id AND colors.id=wallpapers.id AND color='".$color."' GROUP BY tag ORDER BY tag ASC";
+		
+		$dbresult = mysql_query($sql,$connection);
+		while($row = mysql_fetch_assoc($dbresult)) {
+			echo '<li><a href="#homelist" onclick="nextPage(\''.$row['color'].'\',\''.$row['tag'].'\')">'.$row['tag'].'</a></li>';
+		}
+	}
 }
 
 
@@ -106,7 +123,7 @@ else if ( ($color != "") && ($tag != "") )
 	
 	if ( ($color == "all") && ($tag == "all") )
 	{
-		$sql = "SELECT wallpapers.name as name FROM wallpapers ORDER BY wallpapers.name ASC";
+		$sql = "SELECT DISTINCT wallpapers.name as name FROM wallpapers ORDER BY wallpapers.name ASC";
 	}
 	else if ( $tag == "all" )
 	{
@@ -118,7 +135,8 @@ else if ( ($color != "") && ($tag != "") )
 	}
 	else
 	{
-		$sql = "SELECT wallpapers.name as name,tag,color FROM wallpapers,tags,colors WHERE tags.id=wallpapers.id AND colors.id=wallpapers.id AND tags.tag='".$tag."' AND colors.color='".$colors."' ORDER BY wallpapers.name ASC";
+	
+		$sql = "SELECT wallpapers.name AS name1,tag,color FROM wallpapers,tags,colors WHERE tags.id=wallpapers.id AND colors.id=wallpapers.id AND tags.tag='".$tag."' AND colors.color='".$color."' ORDER BY wallpapers.name ASC";
 	}
 
 	
@@ -129,9 +147,10 @@ else if ( ($color != "") && ($tag != "") )
 	
 	while($row = mysql_fetch_assoc($dbresult)) {
 	
-		echo "<li>".$row['name']."</li>";
+		echo "<li>".$row['name1']."</li>";
 
 	}
+	
 }
 
 else if ($export_type == "staff")
