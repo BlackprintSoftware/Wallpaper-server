@@ -58,7 +58,11 @@ if ($isExportingXML)
 //SHOW NO FILTERS
 else if ( ($color == "") && ($tag == "") )
 {
-	echo "<li>blah</li>";
+	echo '<li><a href="#staffpics">Staff Picks</a></li>';
+	echo '<li><a href="#trending">Trending</a></li>';
+	echo '<li><a href="#popular">Popular</a></li>';
+	echo '<li><a href="#homelist" onclick="nextPage(\'none\',\'\'); return false">Colors</a></li>';
+	echo '<li><a href="#homelist" onclick="nextPage(\'\',\'none\'); return false">Categories</a></li>';
 }
 
 //FILTERED ON TAG, BUT NOT ON COLOR. DISPLAY ALL TAGS IF TAG=ALL, OTHERWISE DISPLAY COLORS FILTERED BY THE TAG
@@ -67,23 +71,71 @@ else if ( ($tag != "") && ($color == "") )
 
 	$sql = "";
 
-	if ($tag == "all")
+	if ($tag == "none")
 	{
+		$sql = "SELECT count(*) AS quantity FROM wallpapers";
+		$result = mysql_query($sql,$connection);
+		$total = "";
+		while($row = mysql_fetch_array($result))
+		{
+			$total = $row['quantity'];
+		}
+		
+		
+		echo '<li><a href="#homelist" onclick="nextPage(\''.$row['color'].'\',\'All\')">All</a><span class=ui-li-count>'.$total.'</span></li>';
+
 		$sql = "SELECT count(*) AS quantity,tag FROM tags,wallpapers WHERE tags.id=wallpapers.id GROUP BY tag ORDER BY tag ASC";
-		//EXECUTE SQL QUERY
 		$dbresult = mysql_query($sql,$connection);
 		while($row = mysql_fetch_assoc($dbresult)) {
-			echo '<li><a href="#homelist" onclick="nextPage(\''.$row['color'].'\',\''.$row['tag'].'\')">'.$row['tag'].'</a></li>';
+			echo '<li><a href="#homelist" onclick="nextPage(\''.$row['color'].'\',\''.$row['tag'].'\')">'.$row['tag'].'</a><span class=ui-li-count>'.$row['quantity'].'</span></li>';
 		}
 	}
 	else
 	{
-		$sql = "SELECT count(*) AS quantity,tag,color FROM tags,wallpapers,colors WHERE tags.id=wallpapers.id AND colors.id=wallpapers.id AND tag='".$tag."' GROUP BY color ORDER BY color ASC";
-		
-		$dbresult = mysql_query($sql,$connection);
-		while($row = mysql_fetch_assoc($dbresult)) {
-			echo '<li><a href="#homelist" onclick="nextPage(\''.$row['color'].'\',\''.$row['tag'].'\')">'.$row['color'].'</a></li>';
+		if ($tag == "All")
+		{
+			$sql = "SELECT count(*) AS quantity FROM wallpapers";
+			$result = mysql_query($sql,$connection);
+			$total = "";
+			while($row = mysql_fetch_array($result))
+			{
+				$total = $row['quantity'];
+			}
+			
+			echo '<li><a href="#homelist" onclick="nextPage(\'All\',\'All\')">All</a><span class=ui-li-count>'.$total.'</span></li>';
+
+			$sql = "SELECT count(*) AS quantity,color FROM wallpapers,colors WHERE colors.id=wallpapers.id GROUP BY color ORDER BY color ASC";
+			
+			$dbresult = mysql_query($sql,$connection);
+			while($row = mysql_fetch_assoc($dbresult)) {
+				echo '<li><a href="#homelist" onclick="nextPage(\''.$row['color'].'\',\'All\')">'.$row['color'].'</a><span class=ui-li-count>'.$row['quantity'].'</span></li>';
+			}
 		}
+		else
+		{
+		
+			$sql = "SELECT count(*) AS quantity FROM wallpapers,tags WHERE tag='".$tag."' AND wallpapers.id=tags.id";
+			$result = mysql_query($sql,$connection);
+			$total = "";
+			while($row = mysql_fetch_array($result))
+			{
+				$total = $row['quantity'];
+			}
+		
+			echo '<li><a href="#homelist" onclick="nextPage(\'All\',\''.$tag.'\')">All</a><span class=ui-li-count>'.$total.'</span></li>';
+		
+			$sql = "SELECT count(*) AS quantity,tag,color FROM tags,wallpapers,colors WHERE tags.id=wallpapers.id AND colors.id=wallpapers.id AND tag='".$tag."' GROUP BY color ORDER BY color ASC";
+			
+			$dbresult = mysql_query($sql,$connection);
+			while($row = mysql_fetch_assoc($dbresult)) {
+				echo '<li><a href="#homelist" onclick="nextPage(\''.$row['color'].'\',\''.$row['tag'].'\')">'.$row['color'].'</a><span class=ui-li-count>'.$row['quantity'].'</span></li>';
+			}
+		}	
+		
+	
+		
+		
+		
 	}
 
 }
@@ -94,23 +146,69 @@ else if ( ($color != "") && ($tag == "") )
 
 	$sql = "";
 
-	if ($color == "all")
+	if ($color == "none")
 	{
+		$sql = "SELECT count(*) AS quantity FROM wallpapers";
+		$result = mysql_query($sql,$connection);
+		$total = "";
+		while($row = mysql_fetch_array($result))
+		{
+			$total = $row['quantity'];
+		}
+
+		echo '<li><a href="#homelist" onclick="nextPage(\'All\',\''.$row['tag'].'\')">All</a><span class=ui-li-count>'.$total.'</span></li>';
+		
 		$sql = "SELECT count(*) AS quantity,color FROM colors,wallpapers WHERE colors.id=wallpapers.id GROUP BY color ORDER BY color ASC";
 		//EXECUTE SQL QUERY
 		$dbresult = mysql_query($sql,$connection);
 		while($row = mysql_fetch_assoc($dbresult)) {
-			echo '<li><a href="#homelist" onclick="nextPage(\''.$row['color'].'\',\''.$row['tag'].'\')">'.$row['color'].'</a></li>';
+			echo '<li><a href="#homelist" onclick="nextPage(\''.$row['color'].'\',\''.$row['tag'].'\')">'.$row['color'].'</a><span class=ui-li-count>'.$row['quantity'].'</span></li>';
 		}
 	}
 	else
 	{
-		$sql = "SELECT count(*) AS quantity,tag,color FROM tags,wallpapers,colors WHERE tags.id=wallpapers.id AND colors.id=wallpapers.id AND color='".$color."' GROUP BY tag ORDER BY tag ASC";
 		
-		$dbresult = mysql_query($sql,$connection);
-		while($row = mysql_fetch_assoc($dbresult)) {
-			echo '<li><a href="#homelist" onclick="nextPage(\''.$row['color'].'\',\''.$row['tag'].'\')">'.$row['tag'].'</a></li>';
+		if ($color == "All")
+		{
+			$sql = "SELECT count(*) AS quantity FROM wallpapers";
+			$result = mysql_query($sql,$connection);
+			$total = "";
+			while($row = mysql_fetch_array($result))
+			{
+				$total = $row['quantity'];
+			}
+			
+			echo '<li><a href="#homelist" onclick="nextPage(\'All\',\'All\')">All</a><span class=ui-li-count>'.$total.'</span></li>';
+			
+			$sql = "SELECT count(*) AS quantity,tag FROM tags,wallpapers WHERE tags.id=wallpapers.id GROUP BY tag ORDER BY tag ASC";
+			
+			$dbresult = mysql_query($sql,$connection);
+			while($row = mysql_fetch_assoc($dbresult)) {
+				echo '<li><a href="#homelist" onclick="nextPage(\'All\',\''.$row['tag'].'\')">'.$row['tag'].'</a><span class=ui-li-count>'.$row['quantity'].'</span></li>';
+			}
 		}
+		else
+		{
+			$sql = "SELECT count(*) AS quantity FROM wallpapers,colors WHERE color='".$color."' AND wallpapers.id=colors.id";
+			$result = mysql_query($sql,$connection);
+			$total = "";
+			while($row = mysql_fetch_array($result))
+			{
+				$total = $row['quantity'];
+			}
+			
+			echo '<li><a href="#homelist" onclick="nextPage(\''.$color.'\',\'All\')">All</a><span class=ui-li-count>'.$total.'</span></li>';
+		
+			$sql = "SELECT count(*) AS quantity,tag,color FROM tags,wallpapers,colors WHERE tags.id=wallpapers.id AND colors.id=wallpapers.id AND color='".$color."' GROUP BY tag ORDER BY tag ASC";
+			
+			$dbresult = mysql_query($sql,$connection);
+			while($row = mysql_fetch_assoc($dbresult)) {
+				echo '<li><a href="#homelist" onclick="nextPage(\''.$row['color'].'\',\''.$row['tag'].'\')">'.$row['tag'].'</a><span class=ui-li-count>'.$row['quantity'].'</span></li>';
+			}
+		}
+		
+		
+		
 	}
 }
 
@@ -121,21 +219,20 @@ else if ( ($color != "") && ($tag != "") )
 
 	$sql = "";
 	
-	if ( ($color == "all") && ($tag == "all") )
+	if ( ($color == "All") && ($tag == "All") )
 	{
-		$sql = "SELECT DISTINCT wallpapers.name as name FROM wallpapers ORDER BY wallpapers.name ASC";
+		$sql = "SELECT DISTINCT wallpapers.name as name,wallpapers.thumbnail AS thumb FROM wallpapers ORDER BY wallpapers.name ASC";
 	}
-	else if ( $tag == "all" )
+	else if ( $tag == "All" )
 	{
-		$sql = "SELECT wallpapers.name as name,color FROM wallpapers,colors WHERE colors.id=wallpapers.id AND colors.color='".$color."' ORDER BY wallpapers.name ASC";
+		$sql = "SELECT wallpapers.name AS name1,wallpapers.thumbnail AS thumb,tag,color FROM wallpapers,tags,colors WHERE colors.id=wallpapers.id AND colors.color='".$color."' GROUP BY wallpapers.name ORDER BY wallpapers.name ASC";
 	}
-	else if ( $color == "all" )
+	else if ( $color == "All" )
 	{
-		$sql = "SELECT wallpapers.name as name,tag FROM wallpapers,tags WHERE tags.id=wallpapers.id AND tags.tag='".$tag."' ORDER BY wallpapers.name ASC";
+		$sql = "SELECT wallpapers.name AS name1,wallpapers.thumbnail AS thumb,tag,color FROM wallpapers,tags,colors WHERE tags.id=wallpapers.id AND tags.tag='".$tag."' GROUP BY wallpapers.name ORDER BY wallpapers.name ASC";
 	}
 	else
 	{
-	
 		$sql = "SELECT wallpapers.name AS name1,wallpapers.thumbnail AS thumb,tag,color FROM wallpapers,tags,colors WHERE tags.id=wallpapers.id AND colors.id=wallpapers.id AND tags.tag='".$tag."' AND colors.color='".$color."' ORDER BY wallpapers.name ASC";
 	}
 

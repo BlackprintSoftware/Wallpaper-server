@@ -9,6 +9,9 @@ $name = $_POST['name'];
 $url = 'http://blackprint.ca/Wallpaper/upload/' . $filename;
 $thumburl = 'http://blackprint.ca/Wallpaper/thumbs/' . $filename;
 $_768x1280url = 'http://blackprint.ca/Wallpaper/768x1280/' . $filename;
+$_720x720url = 'http://blackprint.ca/Wallpaper/720x720/' . $filename;
+$_1024x1024url = 'http://blackprint.ca/Wallpaper/1024x1024/' . $filename;
+
 $color = $_POST['color1'];
 $color2 = $_POST['color2'];
 $tag1 = $_POST['tag1'];
@@ -24,7 +27,7 @@ if ((($_FILES["file"]["type"] == "image/gif")
 || ($_FILES["file"]["type"] == "image/jpeg")
 || ($_FILES["file"]["type"] == "image/png")
 || ($_FILES["file"]["type"] == "image/pjpeg"))
-&& ($_FILES["file"]["size"] < 2000000)
+&& ($_FILES["file"]["size"] < 5000000)
 && in_array($extension, $allowedExts))
 {
 	if ($_FILES["file"]["error"] > 0)
@@ -54,16 +57,23 @@ if ((($_FILES["file"]["type"] == "image/gif")
 		    
 		    $img192x192 = new Imagick('upload/' . $filename);
 		    $img768x1280 = new Imagick('upload/' . $filename);
+		    $img720x720 = new Imagick('upload/' . $filename);
+		    $img1024x1024 = new Imagick('upload/' . $filename);
 		    
 		    $img192x192->thumbnailImage(192,192,false);
 		    $img768x1280->thumbnailImage(768,1280,false);
+		    $img720x720->thumbnailImage(720,720,false);
+		    $img1024x1024->thumbnailImage(1024,1024,false);
 		    
 		    $img192x192->writeImage('thumbs/' . $filename);
 		    $img768x1280->writeImage('768x1280/' . $filename);
-
+		    $img720x720->writeImage('720x720/' . $filename);
+		    $img1024x1024->writeImage('1024x1024/' . $filename);
+		    
 		    $img192x192->destroy();
 		    $img768x1280->destroy();
-	      
+		    $img720x720->destroy();
+		    $img1024x1024->destroy();
 	      	//OUTPUT FILE DETAILS
 	      
 	      	echo "<br />" . "<h1>Name: ".$name . "</h1>";
@@ -71,6 +81,9 @@ if ((($_FILES["file"]["type"] == "image/gif")
 			echo "<h2>url: ". $url . "</h2>";
 			echo "<h2>thumburl: ". $thumburl . "</h2>";
 			echo "<h2>768x1280url: ". $_768x1280url . "</h2>";
+			echo "<h2>720x720url: ". $_720x720url . "</h2>";
+			echo "<h2>1024x1024url: ". $_1024x1024url . "</h2>";
+
 			echo "<h2>color primary: ".$color . "</h2>";
 			echo "<h2>color other: ".$color2 . "</h2>";
 			echo "<h2>tag1: ". $tag1 . "</h2>";
@@ -92,7 +105,7 @@ if ((($_FILES["file"]["type"] == "image/gif")
 			
 			//COMPOSE SQL INSERT QUERY
 			
-			$sql = "INSERT INTO wallpapers (name,size,url,comments,thumbnail,768x1280) VALUES ('$name','$size','$url','$comments','$thumburl','$_768x1280url')";
+			$sql = "INSERT INTO wallpapers (name,size,url,comments,thumbnail,768x1280,720x720,1024x1024) VALUES ('$name','$size','$url','$comments','$thumburl','$_768x1280url','$_720x720url','$_1024x1024url')";
 			
 			//EXECUTE SQL INSERT QUERY
 			
@@ -190,7 +203,9 @@ if ((($_FILES["file"]["type"] == "image/gif")
 			echo $numtags . " records added to tags <BR />";
 			echo "<img src='$thumburl'></img><BR />";
 			echo "<img src='$_768x1280url'></img><BR />";
-
+			echo "<img src='$_720x720url'></img><BR />";
+			echo "<img src='$_1024x1024url'></img><BR />";
+			
 			//CLOSE CONNECTION
 			
 			mysql_close($connection);
