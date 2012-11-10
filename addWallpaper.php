@@ -7,6 +7,8 @@ $comments = $_POST['comments'];
 $filename = $_FILES['file']['name'];
 $name = $_POST['name'];
 $url = 'http://blackprint.ca/Wallpaper/upload/' . $filename;
+$thumburl = 'http://blackprint.ca/Wallpaper/thumbs/' . $filename;
+$_768x1280url = 'http://blackprint.ca/Wallpaper/768x1280/' . $filename;
 $color = $_POST['color1'];
 $color2 = $_POST['color2'];
 $tag1 = $_POST['tag1'];
@@ -47,12 +49,28 @@ if ((($_FILES["file"]["type"] == "image/gif")
 		      
 		    move_uploaded_file($_FILES["file"]["tmp_name"], "upload/" . $_FILES["file"]["name"]);
 		    echo "Stored in: " . "upload/" . $_FILES["file"]["name"];
+		    
+		    //RESIZE AND STORE THE RESIZED FILE
+		    
+		    $img192x192 = new Imagick('upload/' . $filename);
+		    $img768x1280 = new Imagick('upload/' . $filename);
+		    
+		    $img192x192->thumbnailImage(192,192,false);
+		    $img768x1280->thumbnailImage(768,1280,false);
+		    
+		    $img192x192->writeImage('thumbs/' . $filename);
+		    $img768x1280->writeImage('768x1280/' . $filename);
+
+		    $img192x192->destroy();
+		    $img768x1280->destroy();
 	      
 	      	//OUTPUT FILE DETAILS
 	      
 	      	echo "<br />" . "<h1>Name: ".$name . "</h1>";
 			echo "<h2>Size: ".$size . " bytes</h2>";
 			echo "<h2>url: ". $url . "</h2>";
+			echo "<h2>thumburl: ". $thumburl . "</h2>";
+			echo "<h2>768x1280url: ". $_768x1280url . "</h2>";
 			echo "<h2>color primary: ".$color . "</h2>";
 			echo "<h2>color other: ".$color2 . "</h2>";
 			echo "<h2>tag1: ". $tag1 . "</h2>";
@@ -74,7 +92,7 @@ if ((($_FILES["file"]["type"] == "image/gif")
 			
 			//COMPOSE SQL INSERT QUERY
 			
-			$sql = "INSERT INTO wallpapers (name,size,url,comments) VALUES ('$name','$size','$url','$comments')";
+			$sql = "INSERT INTO wallpapers (name,size,url,comments,thumbnail,768x1280) VALUES ('$name','$size','$url','$comments','$thumburl','$_768x1280url')";
 			
 			//EXECUTE SQL INSERT QUERY
 			
@@ -170,10 +188,15 @@ if ((($_FILES["file"]["type"] == "image/gif")
 				$numtags++;
 			}
 			echo $numtags . " records added to tags <BR />";
+			echo "<img src='$thumburl'></img><BR />";
+			echo "<img src='$_768x1280url'></img><BR />";
 
 			//CLOSE CONNECTION
 			
 			mysql_close($connection);
+			
+			
+			
 		}
 	}
 }

@@ -136,7 +136,7 @@ else if ( ($color != "") && ($tag != "") )
 	else
 	{
 	
-		$sql = "SELECT wallpapers.name AS name1,tag,color FROM wallpapers,tags,colors WHERE tags.id=wallpapers.id AND colors.id=wallpapers.id AND tags.tag='".$tag."' AND colors.color='".$color."' ORDER BY wallpapers.name ASC";
+		$sql = "SELECT wallpapers.name AS name1,wallpapers.thumbnail AS thumb,tag,color FROM wallpapers,tags,colors WHERE tags.id=wallpapers.id AND colors.id=wallpapers.id AND tags.tag='".$tag."' AND colors.color='".$color."' ORDER BY wallpapers.name ASC";
 	}
 
 	
@@ -147,7 +147,7 @@ else if ( ($color != "") && ($tag != "") )
 	
 	while($row = mysql_fetch_assoc($dbresult)) {
 	
-		echo "<li>".$row['name1']."</li>";
+		echo "<img src=\"".$row['thumb']."\" style=\"float:left;\"></img>";
 
 	}
 	
